@@ -91,6 +91,7 @@
                         <div class="text-h3 q-ma-md" style="font-family: AppleMyungjo; ">
                             <div class="float-left"><span class="text-cyan">MinD</span><span class="text-accent">Graph</span></div>
                         </div>
+                        <q-separator dark></q-separator>
                         <mind-graph></mind-graph>
                     </q-tab-panel>
 
