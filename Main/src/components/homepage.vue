@@ -79,6 +79,7 @@
                                     <q-tab-panel name="back">
                                         <div class="text-h6">License</div>
                                         本作品所有内容都获得相应许可，结合开源代码构建而成。希望您学习愉快~
+                                        <q-separator spaced dark color="blue-5"></q-separator>
                                         <q-btn class="q-ma-md text-h4 bg-white text-accent shadow-3" rounded label="Start Using!"></q-btn>
                                     </q-tab-panel>
                                 </q-tab-panels>
