@@ -1,5 +1,5 @@
 {
-  "name": "nlpwebsite",
+  "name": "quickest_reader_website",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -15,7 +15,11 @@
     "vue-particles": "^1.0.9",
     "vue-router": "^3.1.5",
     "vue-tree-chart": "latest",
-    "@hellowuxin/mindmap": "latest"
+    "@hellowuxin/mindmap": "latest",
+    "axios": "^0.19.2",
+    "vue-axios": "^2.1.5",
+    "qs": "latest",
+    "webpack": "latest"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.2.0",
