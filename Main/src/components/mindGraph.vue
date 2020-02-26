@@ -1,48 +1,32 @@
 <template>
-    <div>
-        <!--        <img src="../static/siweidaotu.jpeg">-->
-        <TreeChart :json="treeData"></TreeChart>
+    <div class="justify-center">
+        <mindmap
+                v-model="data"
+                :height="700"
+                :width="700"
+                :draggable="draggable"
+                :xSpacing="xSpacing"
+                :ySpacing="ySpacing"
+                :gps="gps"
+        ></mindmap>
     </div>
 </template>
 
 <script>
-    import TreeChart from "vue-tree-chart"
+    import mindGraph from '../../public/mindGraphJson/mindGraph.json'
+    import mindmap from "@hellowuxin/mindmap"
     export default {
         name: "mindGraph",
         components:{
-            TreeChart
+            mindmap
         },
         data() {
             return {
-                treeData: {
-                    name: 'root',
-                    image_url:"https://www.baidu.com/img/baidu_resultlogo@2.png",
-                    children: [
-                        {
-                            name: 'children1'
-                        },
-                        {
-                            name: 'children2',
-                            mate: {
-                                name: 'mate',
-                            },
-                            children: [
-                                {
-                                    name: 'grandchild'
-                                },
-                                {
-                                    name: 'grandchild2'
-                                },
-                                {
-                                    name: 'grandchild3'
-                                }
-                            ]
-                        },
-                        {
-                            name: 'children3'
-                        }
-                    ]
-                }
+                data: [mindGraph],
+                draggable: true,
+                xSpacing: 80,
+                ySpacing: 20,
+                gps: true,
             }
         }
 

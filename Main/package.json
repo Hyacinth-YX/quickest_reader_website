@@ -14,7 +14,8 @@
     "vue": "^2.6.11",
     "vue-particles": "^1.0.9",
     "vue-router": "^3.1.5",
-    "vue-tree-chart": "latest"
+    "vue-tree-chart": "latest",
+    "@hellowuxin/mindmap": "latest"
   },
   "devDependencies": {
     "@vue/cli-plugin-babel": "^4.2.0",

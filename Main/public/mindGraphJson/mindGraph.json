@@ -1,0 +1,42 @@
+{
+	"name":"病毒从何而来",
+	"children":
+	[
+		{
+			"name":"什么是病毒",
+			"children":
+			[
+				{"name":"定义", "children": []},
+				{"name":"特征", "children": []},
+				{"name":"源起", "children": []},
+        {"name":"病毒的多样性", "children": []},
+        {"name":"冠状病毒", "children": []}]
+		},
+		{
+      "name":"怎么办",
+      "children": []
+		},
+		{
+			"name":"多喝热水",
+			"children":
+			[
+        {"name":"多睡觉", "children": []},
+        {"name":"好好吃饭", "children": []},
+				{"name":"其他", "children": []},
+				{"name":"因素", "children": []},
+				{
+					"name":"蛋白质",
+					"children":
+					[
+						{"name":"结构", "children": []},
+						{"name":"状态", "children": []},
+						{"name":"种类", "children": []}]
+				},
+				{"name":"水", "children": []},
+				{"name":"无机盐", "children": []},
+				{"name":"过滤", "children": []}]
+		},
+		{
+			"name":"进阶", "children": []
+		}]
+}
