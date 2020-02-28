@@ -19,7 +19,7 @@ const files = {
     },
     // 根据选择文件名，返回该文件中文章的内容 param:文件名
     getFileContent(filename){
-        return axios.get(`${base.first}/files/content/${filename}`)
+        return axios.get(`${base.first}/files/content?${filename}`)
     }
 }
 
