@@ -1,8 +1,6 @@
 import Vue from 'vue'
 import App from './App.vue'
 import './quasar'
-import $ from 'jquery'
-Vue.use($);
 
 // 粒子动画
 import VueParticles from 'vue-particles'

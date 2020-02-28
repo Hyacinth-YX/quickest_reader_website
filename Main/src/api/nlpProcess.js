@@ -7,7 +7,7 @@
  */
 
 import base from './base'; // 导入接口域名列表
-import axios from '@/utils/http'; // 导入http中创建的axios实例
+import axios from '../utils/http'; // 导入http中创建的axios实例
 
 const nlpProcess = {
     // 根据文件名返回思维导图处理完成的json， json格式参考public/mindGraphJson中的格式

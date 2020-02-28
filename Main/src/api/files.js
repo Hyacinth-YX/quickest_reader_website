@@ -4,12 +4,12 @@
  */
 
 import base from './base'; // 导入接口域名列表
-import axios from '@/utils/http'; // 导入http中创建的axios实例
+import axios from '../utils/http'; // 导入http中创建的axios实例
 import qs from 'qs'; // 根据需求是否导入qs模块
 
 const files = {
-    // 文章文件上传（pdf）binary （不允许重名文件） todo: 不确定上传的类型和上传的参数？
-    fileUpload(file,filename){
+    // 文章文件上传（pdf）binary （不允许重名文件）// 文件file为urf-8的txt文本
+    fileUpload(filename,file){
         return axios.post(`${base.first}/files/${filename}`,
             qs.stringify(file))
     },
