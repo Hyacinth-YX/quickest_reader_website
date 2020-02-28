@@ -153,24 +153,27 @@
                 // return a promise
                 // eslint-disable-next-line no-debugger
                 debugger
-                let file = files[0];
-                let filename = file.name
-                return new Promise((resolve, reject) => {
-                    this.getTxtText(file).then(data => {
-                        // data is base64
-                        console.log('file text', data)
-                        // simulating a delay of 2 seconds
-                        setTimeout(() => {
-                            resolve(this.$api.files.fileUpload(filename,data))
-                        }, 2000)
-                    }).catch(() => {
-                        this.$q.notify({
-                            color: 'negative',
-                            message: 'Failed to convert file...'
+                for(let index in files){
+                    let file = files[index];
+                    let filename = file.name
+                    return new Promise((resolve, reject) => {
+                        this.getTxtText(file).then(data => {
+                            // data is base64
+                            console.log('file text', data)
+                            // simulating a delay of 2 seconds
+                            setTimeout(() => {
+                                resolve(this.$api.files.fileUpload(filename,data))
+                            }, 2000)
+                        }).catch(() => {
+                            this.$q.notify({
+                                color: 'negative',
+                                message: 'Failed to convert file...'
+                            })
+                            reject()
                         })
-                        reject()
                     })
-                })
+                }
+
             },
             getTxtText (file) {
                 return new Promise((resolve, reject) => {
