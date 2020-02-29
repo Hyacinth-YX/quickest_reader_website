@@ -35,11 +35,11 @@
                         <div class="q-ma-lg q-mt-xl  shadow-3" style="width: 300px">
                             <q-uploader
                                     ref="uploader"
-                                    url="http://localhost:8080/files/"
                                     label="上传需要转化的文件"
                                     multiple
                                     :factory="uploadFile"
                                     @failed="uploadFailed"
+                                    @uploaded="uploaded"
                                     batch="batch"
                                     style="max-width: 300px"
                                     color="amber"
@@ -88,7 +88,7 @@
                                         本作品所有内容都获得相应许可，结合开源代码构建而成。希望您学习愉快~
                                         <q-separator spaced dark color="blue-5"></q-separator>
                                         <q-btn class="q-ma-md text-h4 bg-white text-accent shadow-3" rounded
-                                               label="Start Using!"></q-btn>
+                                               label="Start Using!" @click="startUsing"></q-btn>
                                     </q-tab-panel>
                                 </q-tab-panels>
                             </div>
@@ -122,7 +122,9 @@
 
     export default {
         name: 'homepage',
-        props: {},
+        props: {
+            fileSelected:String
+        },
         components: {
             readArea,
             mindGraph
@@ -130,13 +132,18 @@
         data() {
             return {
                 tab: 'loadFiles',
-                tab2: 'start',
                 tabSplitterModel: 1,
-                listSplitterModel: 1,
-                fileSelected:'test.txt'
+                listSplitterModel: 1
             }
         },
         methods: {
+            uploaded(){
+                this.tab = 'mindGraph';
+                this.$emit('autoTabInitial')
+            },
+            startUsing(){
+                this.$refs.uploader.pickFiles()
+            },
             uploadFailed(req){
                 console.log('failed',req)
             },
@@ -169,7 +176,7 @@
             getTxtText (file) {
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader()
-                    // reader.onloadend = (e) => resolve(imageToDataUri(e, 400, 400))
+                    // reader.onloadend = (e) => resolve(imageToDataUri(e, 400, 400)); todo
                     reader.readAsText(file,'utf-8')
                     reader.onload = () => resolve(reader.result)
                     reader.onerror = error => reject(error)

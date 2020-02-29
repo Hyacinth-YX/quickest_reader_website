@@ -13,7 +13,7 @@ const files = {
         return axios.post(`${base.first}/files/${filename}`,
             qs.stringify(file))
     },
-    // 获取所有上传成功了的文件名 todo:数据类型用什么？可以存储信息的列表？
+    // 获取所有上传成功了的文件名
     getFileList(){
         return axios.get(`${base.first}/files/names`)
     },

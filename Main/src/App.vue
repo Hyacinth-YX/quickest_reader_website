@@ -33,7 +33,7 @@
             </vue-particles>
         </div>
         <q-page-container>
-            <homepage/>
+            <homepage :fileSelected="fileSelected"/>
             <q-drawer
                     side="right"
                     v-model="drawerRight"
@@ -68,17 +68,17 @@
                         <q-tab-panel name="files" style="min-height: 700px" class="shadow-3">
                             <div class="text-h6">Files</div>
                             <div>
-                                <div class="">
+                                <div>
                                     <q-list bordered padding class="rounded-borders">
                                         <q-item-label header>Files</q-item-label>
-                                        <div v-for="n in 50" :key="n" class="q-ma-sm">
-                                            <q-item clickable v-ripple>
+                                        <div v-for="fileName in filesList" :key="fileName.key" class="q-ma-sm">
+                                            <q-item clickable v-ripple @click="selectFile(fileName)">
                                                 <q-item-section avatar top>
                                                     <q-avatar icon="link" color="grey"
                                                               text-color="white"></q-avatar>
                                                 </q-item-section>
                                                 <q-item-section>
-                                                    <q-item-label lines="2">file{{ n }} 这是文件名</q-item-label>
+                                                    <q-item-label lines="2">{{fileName}}</q-item-label>
                                                 </q-item-section>
                                                 <q-item-section side>
                                                     <q-fab color="white" text-color="black" flat
@@ -140,7 +140,7 @@
         },
         computed: {
             entities: function () {
-                //let entityList = this.$api.nlpProcess.getEntities(this.fileSelected);
+                //let entityList = this.$api.nlpProcess.getEntities(this.fileSelected); todo
                 var entityList = {"address": ['a', 'b', 'c'], "book": ['d', 'e', 'f', 'g']};
                 let entity = "[";
                 for (var type in entityList) {
@@ -150,40 +150,48 @@
                 return eval(entity);
             },
             summary: function () {
-                //let summaryContent = this.$api.nlpProcess.getSummary(this.fileSelected)
+                //let summaryContent = this.$api.nlpProcess.getSummary(this.fileSelected); todo
                 var summaryContent = '说时迟那时快，QCard组件是显示重要分组内容的好方法。 这种模式正在迅速成为应用、网站预览和电子邮件内容的核心设计模式。 它通过包含和组织信息来帮助观看者，同时还设置可预测的期望。';
                 return summaryContent
+            },
+            filesList: function () {
+                //let filesList = this.$api.files.getFileList(this.fileSelected); todo
+                var filesList = [
+                    '中国之中国.txt',
+                    '春天的花海.txt',
+                    '第一序列.txt',
+                    '三字经.txt',
+                    '陈情令.txt',
+                    '庆余年.txt',
+                    '清蒸的三百道做法.txt'
+                ]
+                return filesList
             }
         },
         methods: {
+            selectFile(newFileName){
+                this.rightTab = 'summary'
+                this.fileSelected = newFileName
+            },
             mergeEntity(entityList) {
                 var chileden = '';
                 for (let index in entityList) {
                     chileden = chileden + "{label:'" + entityList[index] + "'},"
                 }
                 return chileden;
+            },
+            autoTabInitial(){
+                this.fileSelected = this.filesList()[0]
             }
         },
         data() {
             return {
                 selected: null,
-                fileSelected: 'test.txt',
+                fileSelected: '',
                 fileSearch: null,
                 drawerRight: true,
                 rightTab: 'files',
-                filter: '',
-                // entities:
-                //     [{
-                //         label: 'address',
-                //         children: [
-                //             {label: 'a'},
-                //             {label: 'b'},
-                //             {label: 'c'},]
-                //     }, {
-                //         label: 'book',
-                //         children: [{label: 'd'}, {label: 'e'}, {label: 'f'}, {label: 'g'},]
-                //     },
-                //     ]
+                filter: ''
             }
         }
 
