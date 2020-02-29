@@ -96,7 +96,13 @@
                         </q-tab-panel>
                         <q-tab-panel name="summary">
                             <div class="text-h6">自动文摘</div>
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                            <q-card flat bordered class="my-card">
+                                <q-card-section>
+                                    <div class="text-h6">{{fileSelected}}</div>
+                                </q-card-section>
+                                <q-card-section class="q-pt-none" v-text="summary">
+                                </q-card-section>
+                            </q-card>
                         </q-tab-panel>
                         <q-tab-panel name="entity">
                             <div class="text-h6">命名实体识别</div>
@@ -142,6 +148,11 @@
                 }
                 entity += ']';
                 return eval(entity);
+            },
+            summary: function () {
+                //let summaryContent = this.$api.nlpProcess.getSummary(this.fileSelected)
+                var summaryContent = '说时迟那时快，QCard组件是显示重要分组内容的好方法。 这种模式正在迅速成为应用、网站预览和电子邮件内容的核心设计模式。 它通过包含和组织信息来帮助观看者，同时还设置可预测的期望。';
+                return summaryContent
             }
         },
         methods: {
@@ -155,9 +166,9 @@
         },
         data() {
             return {
-                selected:null,
+                selected: null,
                 fileSelected: 'test.txt',
-                fileSearch:null,
+                fileSearch: null,
                 drawerRight: true,
                 rightTab: 'files',
                 filter: '',
