@@ -105,13 +105,8 @@
                     </q-tab-panel>
 
                     <q-tab-panel name="readArea">
-                        <div class="text-h3 q-ma-md" style="font-family: AppleMyungjo; ">
-                            <div class="float-left"><span class="text-cyan">Reading</span><span
-                                    class="text-accent">Area</span></div>
-                        </div>
-                        <q-separator dark></q-separator>
                         <div>
-                            <read-area></read-area>
+                            <read-area :fileSelected="fileSelected"></read-area>
                         </div>
 
                     </q-tab-panel>

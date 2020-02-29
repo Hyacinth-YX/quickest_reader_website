@@ -8,7 +8,7 @@
                 <q-space/>
                 <q-btn icon="people" dense flat round></q-btn>
                 <q-btn icon="home" dense flat round></q-btn>
-                <q-btn icon="menu" dense flat round @click="drawerRight=!drawerRight" title="待阅读材料"></q-btn>
+                <q-btn icon="menu" dense flat round @click="drawerRight=!drawerRight" title="目录"></q-btn>
             </q-toolbar>
         </q-header>
         <div id="particlesId">
@@ -39,12 +39,12 @@
                     v-model="drawerRight"
                     show-if-above
                     bordered
-                    :width="500"
+                    :width="300"
                     :breakpoint="500"
                     content-class="bg-white"
             >
                 <q-card class="q-ma-sm" style="min-height: 700px">
-                    <q-input class="q-pa-md" v-model="search" filled type="search" hint="查找文件名/实体/内容">
+                    <q-input class="q-pa-md" v-model="fileSearch" filled ref="filter" type="search" label="查找文件名/实体/内容">
                         <template v-slot:append>
                             <q-icon name="search"/>
                         </template>
@@ -62,7 +62,6 @@
                         <q-tab name="files" label="files"/>
                         <q-tab name="summary" label="summary"/>
                         <q-tab name="entity" label="entity"/>
-                        <q-tab name="relation" label="relation"/>
                     </q-tabs>
                     <q-separator/>
                     <q-tab-panels v-model="rightTab" animated>
@@ -118,10 +117,6 @@
                                 />
                             </div>
                         </q-tab-panel>
-                        <q-tab-panel name="relation">
-                            <div class="text-h6">关系识别</div>
-                            Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                        </q-tab-panel>
                     </q-tab-panels>
                 </q-card>
             </q-drawer>
@@ -139,9 +134,6 @@
         },
         computed: {
             entities: function () {
-                // eslint-disable-next-line no-debugger
-                debugger
-                // eslint-disable-next-line no-unused-vars
                 //let entityList = this.$api.nlpProcess.getEntities(this.fileSelected);
                 var entityList = {"address": ['a', 'b', 'c'], "book": ['d', 'e', 'f', 'g']};
                 let entity = "[";
@@ -165,6 +157,7 @@
             return {
                 selected:null,
                 fileSelected: 'test.txt',
+                fileSearch:null,
                 drawerRight: true,
                 rightTab: 'files',
                 filter: '',
