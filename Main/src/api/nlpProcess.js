@@ -21,14 +21,7 @@ const nlpProcess = {
     // 根据文件名返回该文件自动文摘得到的内容，可以也用json格式，返回：content：''
     getSummary(filename){
         return axios.get(`${base.first}/nlpProcess/summary?${filename}`)
-    },
-    // 根据文件名返回该文件中识别出来所有的实体和关系，（其实就是思维导图的一维化）
-    // {"name":"实体1", "children": [{"name":"关系", "children": [{"name":"实体2", "children": []}]}]}
-    // 这样的格式为一条关系
-    getRelations(filename){
-        return axios.get(`${base.first}/nlpProcess/relations?${filename}`)
     }
-
 }
 
 export default nlpProcess

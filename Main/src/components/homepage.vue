@@ -51,7 +51,7 @@
                         <q-card>
                             <div>
                                 <q-tabs
-                                        v-model="tab2"
+                                        v-model="startTab"
                                         dense
                                         class="bg-grey-3 text-grey-7"
                                         active-color="primary"
@@ -63,7 +63,7 @@
                                     <q-tab name="back" label="about us"/>
                                 </q-tabs>
 
-                                <q-tab-panels v-model="tab2" animated class="bg-blue-5 text-white">
+                                <q-tab-panels v-model="startTab" animated class="bg-blue-5 text-white">
                                     <q-tab-panel name="start">
                                         <div class="text-h6">Mails</div>
                                         <div class="text-body1" align="left">Hi! There!</div>
@@ -132,6 +132,7 @@
         data() {
             return {
                 tab: 'loadFiles',
+                startTab:'start',
                 tabSplitterModel: 1,
                 listSplitterModel: 1
             }
