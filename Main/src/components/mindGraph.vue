@@ -6,33 +6,52 @@
         </div>
         <q-separator dark></q-separator>
         <mindmap
-                v-model="data"
+                v-model="treedata"
                 :height="700"
                 :width="700"
                 :draggable="draggable"
                 :xSpacing="xSpacing"
                 :ySpacing="ySpacing"
                 :gps="gps"
+                v-if="update"
         ></mindmap>
     </div>
 </template>
 
 <script>
-    import mindGraph from '../../public/mindGraphJson/mindGraph.json'
     import mindmap from "@hellowuxin/mindmap"
+
     export default {
         name: "mindGraph",
         props:{
             fileSelected:String
         },
+        watch : {
+            fileSelected : async function(){
+        
+                await this.loadMindGraph()
+            },
+        },
+        methods: {
+            loadMindGraph: async function(){
+                 this.update = false
+                 const raw = await this.$api.nlpProcess.getMindGraph(this.fileSelected)
+                 const code = raw["data"]["code"]
+                 const data = raw["data"]['data']
+                 if (code == 1){
+                     this.$set(this.treedata,0,data)
+                 }
+                 else{
+                    this.$set(this.treedata,0,{"name":"Artical","children":[]})
+                 }
+                this.update = true
+            }
+        },
         components:{
             mindmap
         },
         computed:{
-            data:function () {
-                //var mindGraph = this.$api.nlpProcess.getMindGraph()
-                return [mindGraph]
-            }
+                
         },
         data() {
             return {
@@ -40,7 +59,12 @@
                 xSpacing: 80,
                 ySpacing: 20,
                 gps: true,
+                update : true,
+                treedata:{"name":"Artical","children":[]}
             }
+        },
+        mounted : async function(){
+            await this.loadMindGraph()
         }
 
     }

@@ -6,21 +6,23 @@
  * 实体关系（小思维导图）json
  */
 
-import base from './base'; // 导入接口域名列表
-import axios from '../utils/http'; // 导入http中创建的axios实例
+import {instance,host} from '../utils/http'; // 导入http中创建的axios实例
 
 const nlpProcess = {
     // 根据文件名返回思维导图处理完成的json， json格式参考public/mindGraphJson中的格式
     getMindGraph(filename){
-        return axios.get(`${base.first}/nlpProcess/mindGraph?${filename}`)
+        return instance.get(`${host.first}/nlpProcess/mindgraph?filename=${filename}`)
     },
     // 根据文件名返回该文件中识别出来的所有实体，用json格式，返回{'识别类型':['实体1','实体2','实体3']}
     getEntities(filename){
-        return axios.get(`${base.first}/nlpProcess/entities?${filename}`)
+        return instance.get(`${host.first}/nlpProcess/ner?filename=${filename}`)
     },
     // 根据文件名返回该文件自动文摘得到的内容，可以也用json格式，返回：content：''
     getSummary(filename){
-        return axios.get(`${base.first}/nlpProcess/summary?${filename}`)
+        return instance.get(`${host.first}/nlpProcess/summary?filename=${filename}`)
+    },
+    analyze(filename){
+        return instance.get(`${host.first}/nlpProcess/analyze?filename=${filename}`)
     }
 }
 

@@ -115,6 +115,7 @@
                                 </q-input>
 
                                 <q-tree
+                                        v-if="update"
                                         :nodes="entities"
                                         node-key="label"
                                         :filter="filter"
@@ -138,38 +139,45 @@
         components: {
             homepage
         },
-        computed: {
-            entities: function () {
-                //let entityList = this.$api.nlpProcess.getEntities(this.fileSelected); todo
-                var entityList = {"address": ['a', 'b', 'c'], "book": ['d', 'e', 'f', 'g']};
-                let entity = "[";
-                for (var type in entityList) {
-                    entity = entity + "{label:'" + type + "',children:[" + this.mergeEntity(entityList[type]) + "]},"
-                }
-                entity += ']';
-                return eval(entity);
-            },
-            summary: function () {
-                //let summaryContent = this.$api.nlpProcess.getSummary(this.fileSelected); todo
-                var summaryContent = '说时迟那时快，QCard组件是显示重要分组内容的好方法。 这种模式正在迅速成为应用、网站预览和电子邮件内容的核心设计模式。 它通过包含和组织信息来帮助观看者，同时还设置可预测的期望。';
-                return summaryContent
-            },
-            filesList: function () {
-                //let filesList = this.$api.files.getFileList(this.fileSelected); todo
-                var filesList = [
-                    '中国之中国.txt',
-                    '春天的花海.txt',
-                    '第一序列.txt',
-                    '三字经.txt',
-                    '陈情令.txt',
-                    '庆余年.txt',
-                    '清蒸的三百道做法.txt'
-                ]
-                return filesList
+        watch : {
+            fileSelected : async function () {
+                 await this.getEntity()
+                 await this.getSummary()
+            
             }
         },
+        computed: {
+
+        },
         methods: {
-            selectFile(newFileName){
+            getEntity: async function(){
+
+               this.entities = []
+               const raw_entityList = await this.$api.nlpProcess.getEntities(this.fileSelected)
+               const entityList = raw_entityList["data"]["data"]
+               const code = raw_entityList["data"]["code"]
+               this.update = false
+               
+               if(code == 1) {
+                    let entity = "[";
+                    for (var type in entityList) {
+                        entity = entity + "{label:'" + type + "',children:[" + this.mergeEntity(entityList[type]) + "]},"
+                    }
+                    entity += ']';
+                    this.entities = eval(entity)
+               }
+               this.update = true
+            },
+            getSummary: async function(){
+
+               const raw_entityList = await this.$api.nlpProcess.getSummary(this.fileSelected)
+               const summary = raw_entityList["data"]["data"]
+               const code = raw_entityList["data"]["code"]
+               if(code == 1) {
+                    this.summary = summary
+               }
+            },
+            selectFile: async function(newFileName){
                 this.rightTab = 'summary'
                 this.fileSelected = newFileName
             },
@@ -182,16 +190,27 @@
             },
             autoTabInitial(){
                 this.fileSelected = this.filesList()[0]
-            }
+            },
+
         },
         data() {
             return {
                 selected: null,
                 fileSelected: '',
+                filesList:[],
+                update:true,
+                entities :[],
+                summary : "尚未有机器文摘",
                 fileSearch: null,
                 drawerRight: true,
                 rightTab: 'files',
                 filter: ''
+            }
+        },
+        mounted: async function(){
+            let filesList = await this.$api.files.getFileList()  
+            if(filesList['data']["code"] == 1){
+                this.filesList = filesList['data']['data']
             }
         }
 

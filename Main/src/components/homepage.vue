@@ -36,8 +36,11 @@
                             <q-uploader
                                     ref="uploader"
                                     label="上传需要转化的文件"
+                                    :url = "upload_url"
                                     multiple
+                                    method = "POST"
                                     :factory="uploadFile"
+                                    hide-upload-button
                                     @failed="uploadFailed"
                                     @uploaded="uploaded"
                                     batch="batch"
@@ -119,6 +122,7 @@
     import '../assets/font/HYTianYuFengXingTiW/HYTianYuFengXingTiW.css';
     import readArea from "@/components/readArea";
     import mindGraph from "@/components/mindGraph";
+    import {host} from "../utils/http";
 
     export default {
         name: 'homepage',
@@ -134,13 +138,15 @@
                 tab: 'loadFiles',
                 startTab:'start',
                 tabSplitterModel: 1,
-                listSplitterModel: 1
+                listSplitterModel: 1,
+                upload_url:""
             }
         },
         methods: {
-            uploaded(){
-                this.tab = 'mindGraph';
-                this.$emit('autoTabInitial')
+            uploaded: async function (){
+                console.log()
+                console.log("start analyze..." + this.fileSelected)
+                await this.$api.nlpProcess.analyze(this.fileSelected)  
             },
             startUsing(){
                 this.$refs.uploader.pickFiles()
@@ -148,31 +154,16 @@
             uploadFailed(req){
                 console.log('failed',req)
             },
-            uploadFile (files) {
+            uploadFile : async function (file) {
                 // return a promise
-                // eslint-disable-next-line no-debugger
-                debugger
-                for(let index in files){
-                    let file = files[index];
-                    let filename = file.name
-                    return new Promise((resolve, reject) => {
-                        this.getTxtText(file).then(data => {
-                            // data is base64
-                            console.log('file text', data)
-                            // simulating a delay of 2 seconds
-                            setTimeout(() => {
-                                resolve(this.$api.files.fileUpload(filename,data))
-                            }, 2000)
-                        }).catch(() => {
-                            this.$q.notify({
-                                color: 'negative',
-                                message: 'Failed to convert file...'
-                            })
-                            reject()
-                        })
-                    })
-                }
-
+                console.log("here")
+                file = file[0]
+                let filename = file.name 
+                let data = await this.getTxtText(file)
+                const url = host.first + "/files/upload?data="+data+"&filename="+filename
+                this.upload_url = url
+                this.fileSelected = filename
+                return url
             },
             getTxtText (file) {
                 return new Promise((resolve, reject) => {
