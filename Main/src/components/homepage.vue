@@ -142,7 +142,8 @@
                 tab: 'loadFiles',
                 tab2: 'start',
                 tabSplitterModel: 1,
-                listSplitterModel: 1
+                listSplitterModel: 1,
+                fileSelected:'test.txt'
             }
         },
         methods: {

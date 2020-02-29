@@ -39,12 +39,12 @@
                     v-model="drawerRight"
                     show-if-above
                     bordered
-                    :width="300"
+                    :width="500"
                     :breakpoint="500"
                     content-class="bg-white"
             >
                 <q-card class="q-ma-sm" style="min-height: 700px">
-                    <q-input v-model="search" filled type="search" hint="查找文件名/实体/内容">
+                    <q-input class="q-pa-md" v-model="search" filled type="search" hint="查找文件名/实体/内容">
                         <template v-slot:append>
                             <q-icon name="search"/>
                         </template>
@@ -60,8 +60,9 @@
                             narrow-indicator
                     >
                         <q-tab name="files" label="files"/>
-                        <q-tab name="relation" label="relation"/>
+                        <q-tab name="summary" label="summary"/>
                         <q-tab name="entity" label="entity"/>
+                        <q-tab name="relation" label="relation"/>
                     </q-tabs>
                     <q-separator/>
                     <q-tab-panels v-model="rightTab" animated>
@@ -69,7 +70,7 @@
                             <div class="text-h6">Files</div>
                             <div>
                                 <div class="">
-                                    <q-list bordered padding class="rounded-borders" style="max-width: 350px">
+                                    <q-list bordered padding class="rounded-borders">
                                         <q-item-label header>Files</q-item-label>
                                         <div v-for="n in 50" :key="n" class="q-ma-sm">
                                             <q-item clickable v-ripple>
@@ -94,14 +95,31 @@
                                 </div>
                             </div>
                         </q-tab-panel>
-
-                        <q-tab-panel name="relation">
-                            <div class="text-h6">Relation</div>
+                        <q-tab-panel name="summary">
+                            <div class="text-h6">自动文摘</div>
                             Lorem ipsum dolor sit amet consectetur adipisicing elit.
                         </q-tab-panel>
-
                         <q-tab-panel name="entity">
-                            <div class="text-h6">Entity</div>
+                            <div class="text-h6">命名实体识别</div>
+                            <div class="q-pa-md q-gutter-sm">
+                                <q-input ref="filter" filled v-model="filter" label="搜索实体">
+                                    <template v-slot:append>
+                                        <q-icon v-if="filter !== ''" name="clear" class="cursor-pointer"
+                                                @click="resetFilter"/>
+                                    </template>
+                                </q-input>
+
+                                <q-tree
+                                        :nodes="entities"
+                                        node-key="label"
+                                        :filter="filter"
+                                        default-expand-all
+                                        :selected.sync="selected"
+                                />
+                            </div>
+                        </q-tab-panel>
+                        <q-tab-panel name="relation">
+                            <div class="text-h6">关系识别</div>
                             Lorem ipsum dolor sit amet consectetur adipisicing elit.
                         </q-tab-panel>
                     </q-tab-panels>
@@ -119,10 +137,49 @@
         components: {
             homepage
         },
+        computed: {
+            entities: function () {
+                // eslint-disable-next-line no-debugger
+                debugger
+                // eslint-disable-next-line no-unused-vars
+                //let entityList = this.$api.nlpProcess.getEntities(this.fileSelected);
+                var entityList = {"address": ['a', 'b', 'c'], "book": ['d', 'e', 'f', 'g']};
+                let entity = "[";
+                for (var type in entityList) {
+                    entity = entity + "{label:'" + type + "',children:[" + this.mergeEntity(entityList[type]) + "]},"
+                }
+                entity += ']';
+                return eval(entity);
+            }
+        },
+        methods: {
+            mergeEntity(entityList) {
+                var chileden = '';
+                for (let index in entityList) {
+                    chileden = chileden + "{label:'" + entityList[index] + "'},"
+                }
+                return chileden;
+            }
+        },
         data() {
             return {
+                selected:null,
+                fileSelected: 'test.txt',
                 drawerRight: true,
-                rightTab: 'files'
+                rightTab: 'files',
+                filter: '',
+                // entities:
+                //     [{
+                //         label: 'address',
+                //         children: [
+                //             {label: 'a'},
+                //             {label: 'b'},
+                //             {label: 'c'},]
+                //     }, {
+                //         label: 'book',
+                //         children: [{label: 'd'}, {label: 'e'}, {label: 'f'}, {label: 'g'},]
+                //     },
+                //     ]
             }
         }
 

@@ -14,7 +14,7 @@ const nlpProcess = {
     getMindGraph(filename){
         return axios.get(`${base.first}/nlpProcess/mindGraph?${filename}`)
     },
-    // 根据文件名返回该文件中识别出来的所有实体，用json格式，返回'实体名':'识别类型'
+    // 根据文件名返回该文件中识别出来的所有实体，用json格式，返回{'识别类型':['实体1','实体2','实体3']}
     getEntities(filename){
         return axios.get(`${base.first}/nlpProcess/entities?${filename}`)
     },
