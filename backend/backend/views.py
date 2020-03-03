@@ -1,3 +1,5 @@
+import sys
+sys.path.append("..")
 from utils.http import *
 from utils.errors import *
 from utils.config import*
@@ -6,6 +8,7 @@ import os
 import json
 import subprocess
 import threading
+
 @HttpWrapper
 def test(request):
     return "Connection Success!" 
