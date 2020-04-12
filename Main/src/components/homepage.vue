@@ -39,7 +39,7 @@
                                     :url = "upload_url"
                                     multiple
                                     method = "POST"
-                                    :factory="uploadFile"
+                                    :factory="uploadFileFactory"
                                     hide-upload-button
                                     @failed="uploadFailed"
                                     @uploaded="uploaded"
@@ -117,11 +117,8 @@
 
 
 <script>
-    import '../assets/font/HYRuiYiSongW/HYRuiYiSongW.css';
-    import '../assets/font/HYMiaoHunZiYouTiW/HYMiaoHunZiYouTiW.css';
-    import '../assets/font/HYTianYuFengXingTiW/HYTianYuFengXingTiW.css';
-    import readArea from "@/components/readArea";
-    import mindGraph from "@/components/mindGraph";
+    import readArea from "../components/readArea";
+    import mindGraph from "../components/mindGraph";
     import {host} from "../utils/http";
 
     export default {
@@ -146,7 +143,7 @@
             uploaded: async function (){
                 console.log()
                 console.log("start analyze..." + this.fileSelected)
-                await this.$api.nlpProcess.analyze(this.fileSelected)  
+                await this.$api.nlpProcess.analyze(this.fileSelected)
             },
             startUsing(){
                 this.$refs.uploader.pickFiles()
@@ -154,13 +151,37 @@
             uploadFailed(req){
                 console.log('failed',req)
             },
+            uploadFileFactory(file){
+                // eslint-disable-next-line no-debugger
+                debugger
+                return new Promise((resolve,reject) => {
+                    this.getTxtText(file).then(data => {
+                        console.log('text',data)
+                        setTimeout(() => {
+                            resolve({
+                                url:host.first + "/files/upload",
+                                method:'POST',
+                                headers: [{name:'Content-Type',value:'application/json'}],
+                                fields: [{name:'data',value:data},{name:'filename',value:file.name}]
+                            })
+                        },2000)
+                    }).catch(() => {
+                        console.log('failed')
+                        reject()
+                    })
+                })
+            },
             uploadFile : async function (file) {
                 // return a promise
                 console.log("here")
+                // eslint-disable-next-line no-debugger
+                debugger
                 file = file[0]
-                let filename = file.name 
+                let filename = file.name
                 let data = await this.getTxtText(file)
                 const url = host.first + "/files/upload?data="+data+"&filename="+filename
+                // eslint-disable-next-line no-debugger
+                debugger
                 this.upload_url = url
                 this.fileSelected = filename
                 return url
