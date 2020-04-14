@@ -33,20 +33,24 @@
             </vue-particles>
         </div>
         <q-page-container>
-            <homepage :fileSelected="fileSelected" :entitySelected.sync="selected"/>
+            <homepage :fileSelected="fileSelected" :entitySelected="selected" :tickedEntity="tickedEntity"
+                      :targetSrc="targetSrc" :showIFrame.sync="showIFrame" :tabChangeReadArea.sync="tabChangeReadArea"
+                      :fileSearch.sync="fileSearch"/>
             <q-drawer
                     side="right"
                     v-model="drawerRight"
                     show-if-above
                     bordered
-                    :width="300"
+                    :width="350"
                     :breakpoint="500"
                     content-class="bg-white"
             >
                 <q-card class="q-ma-sm" style="min-height: 700px">
-                    <q-input class="q-pa-md" v-model="fileSearch" filled ref="filter" type="search" label="查找文件名/实体/内容">
+                    <q-input class="q-pa-md" v-model="fileSearch" filled ref="filter" type="search"
+                             label="通过外部查找文件名/实体/内容">
                         <template v-slot:append>
-                            <q-icon name="search"/>
+                            <q-icon v-if="!showIFrame" name="search" @click="searchContent"/>
+                            <q-icon v-else name="close" @click="clearContent"></q-icon>
                         </template>
                     </q-input>
                     <q-separator dark></q-separator>
@@ -73,7 +77,7 @@
                                         <q-item-label header>Files</q-item-label>
                                         <div v-for="fileName in filesList" :key="fileName.key" class="q-ma-sm">
                                             <q-item clickable v-ripple>
-                                                <q-item-section avatar top>
+                                                <q-item-section avatar top @click="selectFile(fileName)">
                                                     <q-avatar icon="link" color="grey"
                                                               text-color="white"></q-avatar>
                                                 </q-item-section>
@@ -84,7 +88,8 @@
                                                     <q-fab color="white" text-color="black" flat
                                                            class="absolute-right"
                                                            icon="keyboard_arrow_left" direction="left" square>
-                                                        <q-fab-action color="red" label="删除" @click="removeFile(fileName)"
+                                                        <q-fab-action color="red" label="删除"
+                                                                      @click="removeFile(fileName)"
                                                                       icon="remove"/>
                                                     </q-fab>
                                                 </q-item-section>
@@ -117,9 +122,11 @@
                                         v-if="update"
                                         :nodes="entities"
                                         node-key="label"
+                                        tick-strategy="leaf"
                                         :filter="filter"
                                         default-expand-all
                                         :selected.sync="selected"
+                                        :ticked.sync="tickedEntity"
                                 />
                             </div>
                         </q-tab-panel>
@@ -138,84 +145,126 @@
         components: {
             homepage
         },
-        watch : {
-            fileSelected : async function () {
-                 await this.getEntity()
-                 await this.getSummary()
+        watch: {
+            fileSelected: async function () {
+                await this.getEntity()
+                await this.getSummary()
+            },
+            selected: function (val) {
+                console.log(val)
+                this.fileSearch = val
             }
-        },
-        computed: {
-
-        },
-        methods: {
-            getEntity: async function(){
-               this.entities = []
-               const raw_entityList = await this.$api.nlpProcess.getEntities(this.fileSelected)
-               const entityList = raw_entityList["data"]["data"]
-               const code = raw_entityList["data"]["code"]
-               this.update = false
-               if(code == 1) {
-                    let entity = "[";
-                    for (var type in entityList) {
-                        entity = entity + "{label:'" + type + "',children:[" + this.mergeEntity(entityList[type]) + "]},"
-                    }
-                    entity += ']';
-                    this.entities = eval(entity)
-               }
-               this.update = true
-            },
-            getSummary: async function(){
-
-               const raw_entityList = await this.$api.nlpProcess.getSummary(this.fileSelected)
-               const summary = raw_entityList["data"]["data"]
-               const code = raw_entityList["data"]["code"]
-               if(code == 1) {
-                    this.summary = summary
-               }
-            },
-            selectFile: async function(newFileName){
-                this.rightTab = 'summary'
-                this.fileSelected = newFileName
-            },
-            mergeEntity(entityList) {
-                var chileden = '';
-                for (let index in entityList) {
-                    chileden = chileden + "{label:'" + entityList[index] + "'},"
+    },
+    methods: {
+        getEntity: async function () {
+            this.entities = []
+            const raw_entityList = await this.$api.nlpProcess.getEntities(this.fileSelected)
+            const entityList = raw_entityList["data"]["data"]
+            const code = raw_entityList["data"]["code"]
+            this.update = false
+            if (code == 1) {
+                let entity = "[";
+                for (var type in entityList) {
+                    entity = entity + "{label:'" + type + "',children:[" + this.mergeEntity(entityList[type]) + "]},"
                 }
-                return chileden;
-            },
-            autoTabInitial(){
-                this.fileSelected = this.filesList()[0]
-            },
-            resetFilter(){
-                this.filter = ""
-            },
-            removeFile(fileName){
-                // 移除文件的api
-                console.log(fileName)
+                entity += ']';
+                entity = "[{label:'allEntities',children:" + entity + "}]"
+                this.entities = eval(entity)
             }
+            this.update = true
+        }
+    ,
+        getSummary: async function () {
 
-        },
-        data() {
-            return {
-                selected: null,
-                fileSelected: '',
-                filesList:[],
-                update:true,
-                entities :[],
-                summary : "尚未有机器文摘",
-                fileSearch: null,
-                drawerRight: true,
-                rightTab: 'files',
-                filter: ''
-            }
-        },
-        mounted: async function(){
-            let filesList = await this.$api.files.getFileList()
-            if(filesList['data']["code"] == 1){
-                this.filesList = filesList['data']['data']
+            const raw_entityList = await this.$api.nlpProcess.getSummary(this.fileSelected)
+            const summary = raw_entityList["data"]["data"]
+            const code = raw_entityList["data"]["code"]
+            if (code == 1) {
+                this.summary = summary
             }
         }
+    ,
+        selectFile: async function (newFileName) {
+            this.rightTab = 'summary'
+            this.fileSelected = newFileName
+        }
+    ,
+        mergeEntity(entityList)
+        {
+            var chileden = '';
+            for (let index in entityList) {
+                chileden = chileden + "{label:'" + entityList[index] + "'},"
+            }
+            return chileden;
+        }
+    ,
+        autoTabInitial()
+        {
+            this.fileSelected = this.filesList()[0]
+        }
+    ,
+        resetFilter()
+        {
+            this.filter = ""
+        }
+    ,
+        removeFile(fileName)
+        {
+            // 移除文件的api
+            console.log(fileName)
+        }
+    ,
+        searchContent()
+        {
+            if (this.fileSearch == null) {
+                console.log(this.$q)
+                this.$q.notify({
+                    message: '您还没有输入要查找的内容哦~',
+                    color: 'blue',
+                    position: 'top-right',
+                    icon: 'announcement'
+                })
+            } else {
+                this.showIFrame = true
+                this.targetSrc = this.netSrc + this.fileSearch
+                this.tabChangeReadArea = true
+            }
+        }
+    ,
+        clearContent()
+        {
+            this.showIFrame = false
+            this.fileSearch = null
+        }
+    }
+    ,
+    data()
+    {
+        return {
+            tickedEntity: [],
+            selected: null,
+            fileSelected: '',
+            filesList: [],
+            update: true,
+            entities: [],
+            summary: "尚未有机器文摘",
+            fileSearch: null,
+            drawerRight: true,
+            rightTab: 'files',
+            filter: '',
+            netSrc: 'https://baike.baidu.com/item/',
+            targetSrc: '',
+            showIFrame: false,
+            tabChangeReadArea: false
+        }
+    }
+    ,
+    mounted: async function () {
+        let filesList = await this.$api.files.getFileList()
+        if (filesList['data']["code"] == 1) {
+            this.filesList = filesList['data']['data']
+        }
+    }
 
     }
 </script>

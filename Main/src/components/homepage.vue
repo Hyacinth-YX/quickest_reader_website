@@ -104,7 +104,9 @@
 
                     <q-tab-panel name="readArea">
                         <div>
-                            <read-area :fileSelected="fileSelected" :entitySelected="entitySelected"></read-area>
+                            <read-area :fileSelected="fileSelected" :entitySelected="entitySelected"
+                                       :tickedEntity="tickedEntity" :targetSrc="targetSrc"
+                                       :showIFrame.sync="showIFrame" :fileSearch.sync="fileSearch"></read-area>
                         </div>
 
                     </q-tab-panel>
@@ -125,7 +127,12 @@
         name: 'homepage',
         props: {
             fileSelected: String,
-            entitySelected: String
+            entitySelected: String,
+            tickedEntity: Array,
+            showIFrame: Boolean,
+            targetSrc: String,
+            tabChangeReadArea: Boolean,
+            fileSearch: String
         },
         components: {
             readArea,
@@ -138,6 +145,14 @@
                 tabSplitterModel: 1,
                 listSplitterModel: 1,
                 upload_url: ""
+            }
+        },
+        watch: {
+            tabChangeReadArea: function (val) {
+                if (val) {
+                    this.tab = "readArea"
+                    this.tabChangeReadArea = false
+                }
             }
         },
         methods: {
@@ -175,8 +190,6 @@
             uploadFile: async function (file) {
                 // return a promise
                 console.log("here")
-                // eslint-disable-next-line no-debugger
-                debugger
                 file = file[0]
                 let filename = file.name
                 let data = await this.getTxtText(file)
