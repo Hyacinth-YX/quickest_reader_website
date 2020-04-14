@@ -33,7 +33,7 @@
             </vue-particles>
         </div>
         <q-page-container>
-            <homepage :fileSelected="fileSelected"/>
+            <homepage :fileSelected="fileSelected" :entitySelected.sync="selected"/>
             <q-drawer
                     side="right"
                     v-model="drawerRight"
@@ -72,19 +72,19 @@
                                     <q-list bordered padding class="rounded-borders">
                                         <q-item-label header>Files</q-item-label>
                                         <div v-for="fileName in filesList" :key="fileName.key" class="q-ma-sm">
-                                            <q-item clickable v-ripple @click="selectFile(fileName)">
+                                            <q-item clickable v-ripple>
                                                 <q-item-section avatar top>
                                                     <q-avatar icon="link" color="grey"
                                                               text-color="white"></q-avatar>
                                                 </q-item-section>
-                                                <q-item-section>
+                                                <q-item-section @click="selectFile(fileName)">
                                                     <q-item-label lines="2">{{fileName}}</q-item-label>
                                                 </q-item-section>
                                                 <q-item-section side>
                                                     <q-fab color="white" text-color="black" flat
                                                            class="absolute-right"
                                                            icon="keyboard_arrow_left" direction="left" square>
-                                                        <q-fab-action color="red" label="删除" @click="onClick"
+                                                        <q-fab-action color="red" label="删除" @click="removeFile(fileName)"
                                                                       icon="remove"/>
                                                     </q-fab>
                                                 </q-item-section>
@@ -113,7 +113,6 @@
                                                 @click="resetFilter"/>
                                     </template>
                                 </q-input>
-
                                 <q-tree
                                         v-if="update"
                                         :nodes="entities"
@@ -143,7 +142,6 @@
             fileSelected : async function () {
                  await this.getEntity()
                  await this.getSummary()
-            
             }
         },
         computed: {
@@ -151,13 +149,11 @@
         },
         methods: {
             getEntity: async function(){
-
                this.entities = []
                const raw_entityList = await this.$api.nlpProcess.getEntities(this.fileSelected)
                const entityList = raw_entityList["data"]["data"]
                const code = raw_entityList["data"]["code"]
                this.update = false
-               
                if(code == 1) {
                     let entity = "[";
                     for (var type in entityList) {
@@ -191,6 +187,13 @@
             autoTabInitial(){
                 this.fileSelected = this.filesList()[0]
             },
+            resetFilter(){
+                this.filter = ""
+            },
+            removeFile(fileName){
+                // 移除文件的api
+                console.log(fileName)
+            }
 
         },
         data() {
@@ -208,7 +211,7 @@
             }
         },
         mounted: async function(){
-            let filesList = await this.$api.files.getFileList()  
+            let filesList = await this.$api.files.getFileList()
             if(filesList['data']["code"] == 1){
                 this.filesList = filesList['data']['data']
             }

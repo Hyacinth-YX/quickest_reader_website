@@ -36,10 +36,10 @@
                             <q-uploader
                                     ref="uploader"
                                     label="上传需要转化的文件"
-                                    :url = "upload_url"
+                                    :url="upload_url"
                                     multiple
-                                    method = "POST"
-                                    :factory="uploadFileFactory"
+                                    method="POST"
+                                    :factory="uploadFile"
                                     hide-upload-button
                                     @failed="uploadFailed"
                                     @uploaded="uploaded"
@@ -104,7 +104,7 @@
 
                     <q-tab-panel name="readArea">
                         <div>
-                            <read-area :fileSelected="fileSelected"></read-area>
+                            <read-area :fileSelected="fileSelected" :entitySelected="entitySelected"></read-area>
                         </div>
 
                     </q-tab-panel>
@@ -124,7 +124,8 @@
     export default {
         name: 'homepage',
         props: {
-            fileSelected:String
+            fileSelected: String,
+            entitySelected: String
         },
         components: {
             readArea,
@@ -133,45 +134,45 @@
         data() {
             return {
                 tab: 'loadFiles',
-                startTab:'start',
+                startTab: 'start',
                 tabSplitterModel: 1,
                 listSplitterModel: 1,
-                upload_url:""
+                upload_url: ""
             }
         },
         methods: {
-            uploaded: async function (){
+            uploaded: async function () {
                 console.log()
                 console.log("start analyze..." + this.fileSelected)
                 await this.$api.nlpProcess.analyze(this.fileSelected)
             },
-            startUsing(){
+            startUsing() {
                 this.$refs.uploader.pickFiles()
             },
-            uploadFailed(req){
-                console.log('failed',req)
+            uploadFailed(req) {
+                console.log('failed', req)
             },
-            uploadFileFactory(file){
-                // eslint-disable-next-line no-debugger
-                debugger
-                return new Promise((resolve,reject) => {
-                    this.getTxtText(file).then(data => {
-                        console.log('text',data)
-                        setTimeout(() => {
-                            resolve({
-                                url:host.first + "/files/upload",
-                                method:'POST',
-                                headers: [{name:'Content-Type',value:'application/json'}],
-                                fields: [{name:'data',value:data},{name:'filename',value:file.name}]
-                            })
-                        },2000)
-                    }).catch(() => {
-                        console.log('failed')
-                        reject()
-                    })
-                })
-            },
-            uploadFile : async function (file) {
+            // uploadFileFactory(file) {
+            //     // eslint-disable-next-line no-debugger
+            //     debugger
+            //     return new Promise((resolve, reject) => {
+            //         this.getTxtText(file).then(data => {
+            //             console.log('text', data)
+            //             setTimeout(() => {
+            //                 resolve({
+            //                     url: host.first + "/files/upload",
+            //                     method: 'POST',
+            //                     headers: [{name: 'Content-Type', value: 'application/json'}],
+            //                     fields: [{name: 'data', value: data}, {name: 'filename', value: file.name}]
+            //                 })
+            //             }, 2000)
+            //         }).catch(() => {
+            //             console.log('failed')
+            //             reject()
+            //         })
+            //     })
+            // },
+            uploadFile: async function (file) {
                 // return a promise
                 console.log("here")
                 // eslint-disable-next-line no-debugger
@@ -179,18 +180,30 @@
                 file = file[0]
                 let filename = file.name
                 let data = await this.getTxtText(file)
-                const url = host.first + "/files/upload?data="+data+"&filename="+filename
                 // eslint-disable-next-line no-debugger
                 debugger
+                // const url = host.first + "/files/upload?data="+data+"&filename="+filename
+                const url = host.first + "/files/upload"
                 this.upload_url = url
                 this.fileSelected = filename
-                return url
+                // return url
+                return new Promise((resolve) => {
+                    // eslint-disable-next-line no-debugger
+                    debugger
+                    console.log('text', data)
+                    resolve({
+                        url: host.first + "/files/upload",
+                        method: 'POST',
+                        headers: [{name: 'Content-Type', value: 'application/json'}],
+                        fields: [{name: 'data', value: data}, {name: 'filename', value: filename}]
+                    })
+                })
             },
-            getTxtText (file) {
+            getTxtText(file) {
                 return new Promise((resolve, reject) => {
                     const reader = new FileReader()
                     // reader.onloadend = (e) => resolve(imageToDataUri(e, 400, 400)); todo
-                    reader.readAsText(file,'utf-8')
+                    reader.readAsText(file, 'utf-8')
                     reader.onload = () => resolve(reader.result)
                     reader.onerror = error => reject(error)
                 })

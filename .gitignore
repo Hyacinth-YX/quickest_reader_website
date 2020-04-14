@@ -104,3 +104,6 @@ dist
 .tern-port
 
 .idea
+
+backend/utils/config.py
+Main/src/utils/http.js
