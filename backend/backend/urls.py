@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from backend.views import *
+from .views import *
 urlpatterns = [
     path('test/',test),
     path("files/names",getFileList),

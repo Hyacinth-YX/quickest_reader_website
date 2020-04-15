@@ -6,6 +6,7 @@
         </div>
         <q-separator dark></q-separator>
         <mindmap
+                ref="mindmap"
                 v-model="treedata"
                 :height="700"
                 :width="700"
@@ -15,6 +16,7 @@
                 :gps="gps"
                 v-if="update"
         ></mindmap>
+        <div id="exportimg"></div>
     </div>
 </template>
 
@@ -28,7 +30,7 @@
         },
         watch : {
             fileSelected : async function(){
-        
+
                 await this.loadMindGraph()
             },
         },
@@ -45,13 +47,13 @@
                     this.$set(this.treedata,0,{"name":"Artical","children":[]})
                  }
                 this.update = true
-            }
+            },
         },
         components:{
             mindmap
         },
         computed:{
-                
+
         },
         data() {
             return {

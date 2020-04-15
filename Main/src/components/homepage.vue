@@ -157,7 +157,7 @@
         },
         methods: {
             uploaded: async function () {
-                console.log()
+                location.reload()
                 console.log("start analyze..." + this.fileSelected)
                 await this.$api.nlpProcess.analyze(this.fileSelected)
             },
@@ -167,48 +167,26 @@
             uploadFailed(req) {
                 console.log('failed', req)
             },
-            // uploadFileFactory(file) {
-            //     // eslint-disable-next-line no-debugger
-            //     debugger
-            //     return new Promise((resolve, reject) => {
-            //         this.getTxtText(file).then(data => {
-            //             console.log('text', data)
-            //             setTimeout(() => {
-            //                 resolve({
-            //                     url: host.first + "/files/upload",
-            //                     method: 'POST',
-            //                     headers: [{name: 'Content-Type', value: 'application/json'}],
-            //                     fields: [{name: 'data', value: data}, {name: 'filename', value: file.name}]
-            //                 })
-            //             }, 2000)
-            //         }).catch(() => {
-            //             console.log('failed')
-            //             reject()
-            //         })
-            //     })
-            // },
             uploadFile: async function (file) {
-                // return a promise
-                console.log("here")
+                this.$q.notify({
+                    message: '正在上传~请等待自动刷新',
+                    color: 'blue',
+                    position: 'top-right',
+                    icon: 'announcement'
+                })
                 file = file[0]
                 let filename = file.name
                 let data = await this.getTxtText(file)
-                // eslint-disable-next-line no-debugger
-                debugger
-                // const url = host.first + "/files/upload?data="+data+"&filename="+filename
                 const url = host.first + "/files/upload"
                 this.upload_url = url
                 this.fileSelected = filename
-                // return url
                 return new Promise((resolve) => {
-                    // eslint-disable-next-line no-debugger
-                    debugger
                     console.log('text', data)
                     resolve({
                         url: host.first + "/files/upload",
                         method: 'POST',
-                        headers: [{name: 'Content-Type', value: 'application/json'}],
-                        fields: [{name: 'data', value: data}, {name: 'filename', value: filename}]
+                        // headers: [{name: 'Content-Type', value: 'application/x-www-form-urlencoded;charset=utf-8'}],
+                        fields: [{name: 'data', value: data}]
                     })
                 })
             },

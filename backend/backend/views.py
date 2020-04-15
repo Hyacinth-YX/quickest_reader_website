@@ -1,4 +1,5 @@
 import sys
+
 sys.path.append("..")
 from utils.http import *
 from utils.errors import *
@@ -28,12 +29,13 @@ def getFileContent(request):
         raise NoValue()
 
 @HttpWrapper
-def uploadFile(request): 
-    filename = request.GET.get("filename")
-    data     = request.GET.get("data")
-    with open(uploaded_file_path + filename,"w",encoding="utf-8") as f:
-         f.write(data)
-    return filename
+def uploadFile(request):
+    if request.method == 'POST':
+        for filename in request.FILES:
+            request.FILES.get(filename).chunks()
+            for chunk in request.FILES.get(filename).chunks():
+                with open (uploaded_file_path + filename, "wb+") as f:
+                    f.write(chunk)
 
 @HttpWrapper
 def ner(request):

@@ -8,11 +8,17 @@
             <iframe v-if="showIFrame" :src="targetSrc" height="300px" width="900px"></iframe>
         </div>
         <q-separator dark></q-separator>
-        <p class="reading-titile">{{fileSelected}}</p>
-        <div class="reading-area">
-            <div v-for="p in paragraphs" :key="p.id" v-html="p">
+        <q-scroll-area
+                :thumb-style="thumbStyle"
+                :bar-style="barStyle"
+                style="height: 610px; max-width: 900px;"
+        >
+            <p class="reading-titile shadow-5 q-pa-md">{{fileSelected}}</p>
+            <div class="reading-area shadow-5 q-pa-md">
+                <div v-for="p in paragraphs" :key="p.id" v-html="p">
+                </div>
             </div>
-        </div>
+        </q-scroll-area>
     </div>
 </template>
 
@@ -42,7 +48,24 @@
                 let style = "text-indent:" + this.paraStyleSet.indent + ";" +
                     "font-size:" + this.paraStyleSet.fontSize + ";"
                 return style
-
+            },
+            thumbStyle () {
+                return {
+                    right: '4px',
+                    borderRadius: '5px',
+                    backgroundColor: '#027be3',
+                    width: '5px',
+                    opacity: 0.75
+                }
+            },
+            barStyle () {
+                return {
+                    right: '2px',
+                    borderRadius: '9px',
+                    backgroundColor: '#027be3',
+                    width: '9px',
+                    opacity: 0.2
+                }
             }
         },
         watch: {
@@ -103,9 +126,6 @@
                     $(this).html($(this).html().replace(rep, replaceHTML))
                 })
             },
-            searchtag() {
-                console.log("1234")
-            }
         }
     }
 </script>
@@ -116,6 +136,7 @@
         font-size: 30px;
         font-family: "Songti SC";
         font-weight: bold;
+        background-color: rgba(246, 240, 228, 0.77);
     }
 
     .reading-area {
